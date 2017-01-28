@@ -2,50 +2,68 @@
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.IO;
 
 public class serv
 {
-    public static void Main()
+    static void Main(string[] args)
     {
-        try
+        Console.WriteLine("Server started");
+        TcpServer server = new TcpServer(8001);
+    }
+}
+
+class TcpServer
+{
+    private TcpListener _server;
+    private Boolean _isRunning;
+
+    public TcpServer(int port)
+    {
+        _server = new TcpListener(IPAddress.Any, port);
+        _server.Start();
+
+        _isRunning = true;
+
+        LoopClients();
+    }
+
+    public void LoopClients()
+    {
+        while (_isRunning)
         {
-            IPAddress ipAd = IPAddress.Parse("127.0.0.1");
-            // use local m/c IP address, and 
-            // use the same in the client
-
-            /* Initializes the Listener */
-            TcpListener myList = new TcpListener(ipAd, 8001);
-
-            /* Start Listeneting at the specified port */
-            myList.Start();
-
-            Console.WriteLine("The server is running at port 8001...");
-            Console.WriteLine("The local End point is  :" +
-                              myList.LocalEndpoint);
-            Console.WriteLine("Waiting for a connection.....");
-
-            Socket s = myList.AcceptSocket();
-            Console.WriteLine("Connection accepted from " + s.RemoteEndPoint);
-
-            byte[] b = new byte[100];
-            int k = s.Receive(b);
-            Console.WriteLine("Recieved...");
-            for (int i = 0; i < k; i++)
-                Console.Write(Convert.ToChar(b[i]));
-
-            ASCIIEncoding asen = new ASCIIEncoding();
-            s.Send(asen.GetBytes("The string was recieved by the server."));
-            Console.WriteLine("\nSent Acknowledgement");
-            /* clean up */
-            s.Close();
-            myList.Stop();
-            Console.Read();
-
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Error..... " + e.StackTrace);
+            TcpClient newClient = _server.AcceptTcpClient();
+            Thread t = new Thread(new ParameterizedThreadStart(HandleClient));
+            t.Start(newClient);
         }
     }
 
+    public void HandleClient(object obj)
+    {
+        // retrieve client from parameter passed to thread
+        TcpClient client = (TcpClient)obj;
+        Console.WriteLine("New client: " + ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString());
+        // sets two streams
+        StreamWriter sWriter = new StreamWriter(client.GetStream(), Encoding.ASCII);
+        StreamReader sReader = new StreamReader(client.GetStream(), Encoding.ASCII);
+        // you could use the NetworkStream to read and write, 
+        // but there is no forcing flush, even when requested
+
+        Boolean bClientConnected = true;
+        String sData = null;
+
+        while (bClientConnected)
+        {
+            // reads from stream
+            sData = sReader.ReadLine();
+
+            // shows content on the console.
+            Console.WriteLine("Client &gt; " + sData);
+
+            // to write something back.
+            // sWriter.WriteLine("Meaningfull things here");
+            // sWriter.Flush();
+        }
+    }
 }

@@ -59,7 +59,7 @@ class TcpServer
             sData = sReader.ReadLine();
 
             // shows content on the console.
-            Console.WriteLine("Client &gt; " + sData);
+            Console.WriteLine("Client:  " + ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString() + " " + sData);
 
             // to write something back.
             // sWriter.WriteLine("Meaningfull things here");

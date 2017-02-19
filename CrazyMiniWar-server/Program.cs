@@ -58,7 +58,7 @@ class TcpServer
         client.Reader = new StreamReader(client.Tcp.GetStream(), Encoding.ASCII);
         // you could use the NetworkStream to read and write, 
         // but there is no forcing flush, even when requested
-            _clients.Add(client);
+        _clients.Add(client);
         Boolean bClientConnected = true;
         String sData = null;
 
@@ -91,6 +91,10 @@ class TcpServer
                     if (args[0].Equals("shoot"))
                     {
                         BroadCast(client, "shoot|" + args[1] + "|" + args[2] + "|" + client.Name);
+                    }
+                    if (args[0].Equals("respawn"))
+                    {
+                        BroadCast(client, "respawn|" + client.Name);
                     }
                 }
             }

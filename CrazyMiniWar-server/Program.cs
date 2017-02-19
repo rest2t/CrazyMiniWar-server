@@ -88,6 +88,10 @@ class TcpServer
                     {
                        BroadCast(client, "pos|" + args[1] + "|" + args[2] + "|" + args[3] + "|" + client.Name);
                     }
+                    if (args[0].Equals("shoot"))
+                    {
+                        BroadCast(client, "shoot|" + args[1] + "|" + args[2] + "|" + client.Name);
+                    }
                 }
             }
             catch(IOException exception)

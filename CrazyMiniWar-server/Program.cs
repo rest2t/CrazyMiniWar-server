@@ -86,7 +86,7 @@ class TcpServer
                     }
                     if (sData.IndexOf("pos") == 0)
                     {
-                       BroadCast(client, "pos|" + args[1] + "|" + args[2] + "|" + client.Name);
+                       BroadCast(client, "pos|" + args[1] + "|" + args[2] + "|" + args[3] + "|" + client.Name);
                     }
                 }
             }

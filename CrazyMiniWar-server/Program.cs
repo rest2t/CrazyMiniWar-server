@@ -96,6 +96,10 @@ class TcpServer
                     {
                         BroadCast(client, "respawn|" + client.Name);
                     }
+                    if (args[0].Equals("chat"))
+                    {
+                        BroadCast(client, "chat|" + args[1] + "|" + client.Name);
+                    }
                 }
             }
             catch(IOException exception)

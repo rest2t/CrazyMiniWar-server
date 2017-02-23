@@ -85,7 +85,6 @@ class TcpServer
                                 client.Writer.WriteLine("newClient|" + client1.Name);
                             }
                         }
-                        Thread.Sleep(1000);
                         client.Writer.WriteLine("map|" + Map.Serialize());
                         client.Writer.Flush();
                     }

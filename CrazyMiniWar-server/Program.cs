@@ -22,8 +22,10 @@ class TcpServer
     private Boolean _isRunning;
     private List<Client> _clients;
 
+    public Map Map = Map.Load("maps/test.txt");
     public TcpServer(int port)
     {
+        Console.WriteLine(Map.Serialize());
         _clients = new List<Client>();
         _server = new TcpListener(IPAddress.Any, port);
         _server.Start();
@@ -81,8 +83,11 @@ class TcpServer
                             if (client1 != client)
                             {
                                 client.Writer.WriteLine("newClient|" + client1.Name);
-
-                            }                        }
+                            }
+                        }
+                        Thread.Sleep(1000);
+                        client.Writer.WriteLine("map|" + Map.Serialize());
+                        client.Writer.Flush();
                     }
                     if (sData.IndexOf("pos") == 0)
                     {

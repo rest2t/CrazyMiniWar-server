@@ -70,7 +70,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="maps\test.txt">
+    <Content Include="maps\cage.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="maps\default.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -22,7 +22,7 @@ class TcpServer
     private Boolean _isRunning;
     private List<Client> _clients;
 
-    public Map Map = Map.Load("maps/test.txt");
+    public Map Map = Map.Load("maps/default.txt");
     public TcpServer(int port)
     {
         Console.WriteLine(Map.Serialize());
@@ -50,23 +50,16 @@ class TcpServer
 
     public void HandleClient(object obj)
     {
-        // retrieve client from parameter passed to thread
         Client client = (Client)obj;
-        //Console.WriteLine("New client: " + ((IPEndPoint)client.Tcp.Client.RemoteEndPoint).Address.ToString());
 
-
-        // sets two streams
         client.Writer = new StreamWriter(client.Tcp.GetStream(), Encoding.ASCII);
         client.Reader = new StreamReader(client.Tcp.GetStream(), Encoding.ASCII);
-        // you could use the NetworkStream to read and write, 
-        // but there is no forcing flush, even when requested
         _clients.Add(client);
         Boolean bClientConnected = true;
         String sData = null;
 
         while (bClientConnected)
         {
-            // reads from stream
             try
             {
                 sData = client.Reader.ReadLine();
@@ -104,6 +97,12 @@ class TcpServer
                     {
                         BroadCast(client, "chat|" + args[1] + "|" + client.Name);
                     }
+                    if (args[0].Equals("switchMap"))
+                    {
+                        Map = Map.Load("maps/" + args[1] + ".txt");
+                        BroadCast(null, "map|" + Map.Serialize());
+                        Console.WriteLine("changing map");
+                    }
                 }
             }
             catch(IOException exception)
@@ -111,13 +110,6 @@ class TcpServer
                 bClientConnected = false;
             }
             
-
-            // shows content on the console.
-            //Console.WriteLine("Client:  " + ((IPEndPoint)client.Tcp.Client.RemoteEndPoint).Address.ToString() + " " + sData);
-
-            // to write something back.
-            // sWriter.WriteLine("Meaningfull things here");
-            // sWriter.Flush();
         }
         Console.WriteLine("client disconnected: " + client.Name);
         _clients.Remove(client);
